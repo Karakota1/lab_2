@@ -131,10 +131,12 @@
     <ClCompile Include="CS.cpp" />
     <ClCompile Include="Kondarev_22_04_2.cpp" />
     <ClCompile Include="Pipe.cpp" />
+    <ClCompile Include="Subfuncs.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CS.h" />
     <ClInclude Include="Pipe.h" />
+    <ClInclude Include="Subfuncs.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
