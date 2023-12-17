@@ -21,51 +21,32 @@ int CS::workingStations(int index)
 
 std::vector<int> CS::filterCS()
 {
-	vector <int> index;
-	string name = "all";
-	float status = -1;
-	cout << "\n0. Фильтр \n1. Отобразить всё\nВведите: ";
-	if (!Choose(0, 1))
-	{
-		cout << "Поиск по названию \n0. Да\n1. Нет\nВведите: " << endl;
+	if (cs.size() != 0) {
+		vector <int> index;
+		string name;
+		float status;
+		cout << "\n0. Фильтр \n1. Отобразить всё\nВведите: ";
 		if (!Choose(0, 1))
 		{
 			cout << "Имя: ";
 			inputString(cin, name);
 			cout << endl;
-		}
-		cout << "Поиск по проценту незадействованных цехов: \n0. Да\n1.Нет\nВведите: " << endl;
-		if (!Choose(0, 1))
-		{
+
 			cout << "Процент незадействованных цехов:";
 			status = InputNum(0, 100);
 			cout << endl;
-		}
 
-		if (name != "all" and status != -1) {
 			for (int i = 0; i < cs.size(); i++)
 				if (cs[i].name == name and (cs[i].wrkshopsCount - workingStations(i)) / cs[i].wrkshopsCount * 100 == status)
 					index.push_back(i);
 		}
-		else if (name == "all" and status != -1) {
-			for (int i = 0; i < cs.size(); i++)
-				if ((cs[i].wrkshopsCount - workingStations(i)) / cs[i].wrkshopsCount * 100 == status)
-					index.push_back(i);
-		}
-		else if (name != "all" and status == -1) {
-			for (int i = 0; i < cs.size(); i++)
-				if (cs[i].name == name)
-					index.push_back(i);
-		}
-		else {
+		else
 			for (int i = 0; i < cs.size(); i++)
 				index.push_back(i);
-		}
+		return index;
 	}
 	else
-		for (int i = 0; i < cs.size(); i++)
-			index.push_back(i);
-	return index;
+		return {};
 }
 
 void CS::AddCS()
@@ -88,27 +69,33 @@ void CS::AddCS()
 }
 
 void CS::ViewWS(int& i) {
-	for (int j = 0; j < cs[i].WS.size(); j++) {
-		if (cs[i].WS[j])
-			cout << "\tЦех №" << j + 1 << "\t\tВ рабочем состоянии" << endl;
-		else
-			cout << "\tЦех №" << j + 1 << "\t\tНе в рабочем состоянии" << endl;
+	if (cs.size() != 0) {
+		for (int j = 0; j < cs[i].WS.size(); j++) {
+			if (cs[i].WS[j])
+				cout << "\tЦех №" << j + 1 << "\t\tВ рабочем состоянии" << endl;
+			else
+				cout << "\tЦех №" << j + 1 << "\t\tНе в рабочем состоянии" << endl;
+		}
 	}
 }
 
 void CS::ViewCSs()
 {
-	vector <int> indexes = filterCS();
-	cout << "Список КС:" << endl << endl;
-	for (int i : indexes) {
-		cout << "ID: " << cs[i].id << endl;
-		cout << "Номер: " << i+1 << endl;
-		cout << "Название КС: " << cs[i].name << endl;
-		cout << "Число Цехов: " << cs[i].wrkshopsCount << endl << endl;
-		cout << "Эффективность КС: " << cs[i].efficiency << "%" << endl << endl;
-		cout << endl;
-		ViewWS(i);
+	if (cs.size() != 0) {
+		vector <int> indexes = filterCS();
+		cout << "Список КС:" << endl << endl;
+		for (int i : indexes) {
+			cout << "ID: " << cs[i].id << endl;
+			cout << "Номер: " << i + 1 << endl;
+			cout << "Название КС: " << cs[i].name << endl;
+			cout << "Число Цехов: " << cs[i].wrkshopsCount << endl << endl;
+			cout << "Эффективность КС: " << cs[i].efficiency << "%" << endl << endl;
+			cout << "Чисто рабочих станций: " << cs[i].WS.size() << endl;
+			cout << endl;
+			//ViewWS(i); Ну если очень хочется посмотреть на рабочие станции, то милости прошу - раскоментируй
+		}
 	}
+	
 }
 
 void CS::CSChange(const int& id_cs)
@@ -128,19 +115,23 @@ void CS::CSChange(const int& id_cs)
 
 void CS::packageCS()
 {
-	vector <int> index = indexes(cs.size());
-	cout << "\n0.Изменить название КС\n1.Удалить КС\nВведите: ";
-	if (!Choose(0, 1)) {
-		string new_name;
+	vector <int> index = filterCS();
+	cout << "\n0.Редактировать\n1.Удалить\nВведите:  ";
+	int num = Choose(0, 2);
+	string new_name;
+	switch (num) {
+	case 0:
 		cout << "Введите новое название для КС: ";
-		cin.ignore(10000,'\n');
-		getline(cin,new_name);
+		inputString(cin, new_name);
 		for (int i : index) {
-			cs[i-1].name = new_name;
+			cs[i].name = new_name;
 		}
-	}
-	else {
-		cs.erase(cs.begin() + index[0] - 1,cs.begin()+index[index.size()-1]);
+		break;
+	case 1:
+		for (int i = index.size() - 1; i >= 0; i--) {
+			cs.erase(cs.begin() + index[i]);//когда мы удаляем некоторые элементы, надо учитывать, что до этого мы удалили какие-то другие, значит, их индекс съехал. Делаем выводы!
+		}
+		break;
 	}
 }
 

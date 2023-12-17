@@ -71,44 +71,33 @@ int main()
 		case 3:
 			//system("cls");
 			cout << "\t0.Трубы\n\t1.КС\n";
-			if(!Choose(0,1))
+			if (!Choose(0, 1))
 				pipes.ViewPipes();
 			else
 				css.ViewCSs();
 			break;
 		case 4:
 			//system("cls");
-			cout << "Выберите трубу для редактирования: ";
+			//system("cls");
+			cout << "\t0.Трубы\n\t1.КС\n";
+			if (!Choose(0, 1))
+				pipes.packagePipe();
+			else
+				css.packageCS();
+			break;
+			/*cout << "Выберите трубу для редактирования: ";
 			pipes.ViewPipes();
 			cout << "Введите номер трубы для редактирования: ";
-			pipes.PipeChange(Choose(1,pipes.pipe.size()));
+			pipes.PipeChange(Choose(1,pipes.pipe.size()));*/
 			//system("cls");
-			break;
 		case 5:
-			//system("cls");
-			cout << "Выберите КС для редактирования: ";
-			css.ViewCSs();
-			cout << "Введите номер цеха для редактирования: ";
-			css.CSChange(Choose(1,css.cs.size()));
-			//system("cls");
+			SaveData(pipes, css);
 			break;
 		case 6:
-			SaveData(pipes,css);
-			break;
-		case 7:
 			LoadData(pipes, css);
-			break;
-		case 8:
-			pipes.packagePipe();
-			break;
-		case 9:
-			css.packageCS();
 			break;
 		case 0:
 			exit(0);
-		default:
-			system("cls");
-			cout << "Ошибка ввода\n";
 			break;
 		}
 	}

@@ -12,51 +12,31 @@ Pipe::Pipe()
 
 vector <int> Pipe::filterPipes()
 {
-	vector <int> index;
-	string name = "all";
-	int status = -1;
-	cout << "\n0. Фильтр \n1. Отобразить всё\nВведите: ";
-	if (!Choose(0, 1))
-	{
-		cout << "Поиск по названию \n0. Да\n1. Нет\nВведите: " << endl;
+	if (pipe.size() != 0) {
+		vector <int> index;
+		string name;
+		int status;
+		cout << "\n0. Фильтр \n1. Отобразить всё\nВведите: ";
 		if (!Choose(0, 1))
 		{
 			cout << "Имя: ";
 			inputString(cin, name);
 			cout << endl;
-		}
 
-		cout << "Поиск по статусу: \n0. Да\n1.Нет\nВведите: " << endl;
-		if (!Choose(0, 1))
-		{
 			cout << "0. Работает \n1. В ремонте";
 			status = Choose(0, 1);
-		}
 
-		if (name != "all" and status != -1) {
 			for (int i = 0; i < pipe.size(); i++)
 				if (pipe[i].name == name and pipe[i].inRepare == status)
 					index.push_back(i);
 		}
-		else if (name == "all" and status != -1) {
-			for (int i = 0; i < pipe.size(); i++)
-				if (pipe[i].inRepare == status)
-					index.push_back(i);
-		}
-		else if (name != "all" and status == -1) {
-			for (int i = 0; i < pipe.size(); i++)
-				if (pipe[i].name == name)
-					index.push_back(i);
-		}
-		else {
+		else
 			for (int i = 0; i < pipe.size(); i++)
 				index.push_back(i);
-		}
+		return index;
 	}
 	else
-		for (int i = 0; i < pipe.size(); i++)
-			index.push_back(i);
-	return index;
+		return {};
 }
 
 void Pipe::AddPipe()
@@ -77,18 +57,20 @@ void Pipe::AddPipe()
 
 void Pipe::ViewPipes()
 {
-	vector <int> indexes = filterPipes();
-	cout << "Список труб:" << endl << endl;
-	for (int i : indexes) {
-		cout << "Id: " << pipe[i].id << endl;
-		cout << "Номер: " << i + 1 << endl;
-		cout << "Название трубы: " << pipe[i].name << endl;
-		cout << "Длина трубы: " << pipe[i].length << endl;
-		cout << "Диаметр трубы: " << pipe[i].diameter << endl;
-		if (pipe[i].inRepare)
-			cout << "Состояние: ВЫКЛ." << endl << endl;
-		else
-			cout << "Состояние: ВКЛ." << endl << endl;
+	if (pipe.size()!=0) {
+		vector <int> indexes = filterPipes();
+		cout << "Список труб:" << endl << endl;
+		for (auto i : indexes) {
+			cout << "Id: " << pipe[i].id << endl;
+			cout << "Номер: " << i + 1 << endl;
+			cout << "Название трубы: " << pipe[i].name << endl;
+			cout << "Длина трубы: " << pipe[i].length << endl;
+			cout << "Диаметр трубы: " << pipe[i].diameter << endl;
+			if (pipe[i].inRepare)
+				cout << "Состояние: ВЫКЛ." << endl << endl;
+			else
+				cout << "Состояние: ВКЛ." << endl << endl;
+		}
 	}
 }
 
@@ -138,18 +120,27 @@ void Pipe::PipeChange(const int& num)
 	}
 }
 
-void Pipe::packagePipe()
+void Pipe::packagePipe() //редактировать, удалить, посмотреть  при пакетном редактировании просто все из фильтра редактируются!
 {
-	std::vector <int> index = indexes(pipe.size());
-	cout << "0. Изменить состояние труб\n1. Удалить трубы";
-	if (!Choose(0, 1))
-	{
-		cout << "Состояние:\n0.Работает\n1.Требуется ремонт\n";
-		int status = Choose(0, 1);
-		for (int i : index) {
-			pipe[i - 1].inRepare = status;
+	if (pipe.size() != 0) {
+		cout << "0. Редактировать трубы\n1. Удалить трубы\nВведите: ";
+		int num = Choose(0, 2);
+		int status;
+		vector <int> index = filterPipes();
+		switch (num)
+		{
+		case 0:
+			cout << "Состояние:\n0.Работает\n1.Требуется ремонт\n";
+			status = Choose(0, 1);
+			for (int i : index) {
+				pipe[i].inRepare = status;
+			}
+			break;
+		case 1:
+			for (int i = index.size() - 1; i >= 0; i--) {
+				pipe.erase(pipe.begin() + index[i]);
+			}
+			break;
 		}
 	}
-	else
-		pipe.erase(pipe.begin()+index[0]-1, pipe.begin()+index[index.size()-1]);
 }

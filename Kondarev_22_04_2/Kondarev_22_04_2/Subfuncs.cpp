@@ -8,14 +8,15 @@ int Menu()
 	std::cout << "\n1.Добавить трубу" << endl
 		<< "2.Добавить КС" << endl
 		<< "3.Список объектов" << endl
-		<< "4.Редактировать трубы" << endl
-		<< "5.Редактировать цеха"<< endl
-		<< "6.Сохранить"<< endl
-		<< "7.Загрузить"<< endl
-		<< "8.Пакетное редактирование труб" << endl
-		<< "9.Пакетное редактирование КС" << endl
+		<< "4.Пакетное редактирование" << endl
+		//<< "4.Редактировать трубы" << endl //редактировать, удалить, посмотреть
+		//<< "5.Редактировать цеха"<< endl //switch в фильтре
+		<< "5.Сохранить"<< endl
+		<< "6.Загрузить"<< endl
+		//<< "8.Пакетное редактирование труб" << endl
+		//<< "9.Пакетное редактирование КС" << endl
 		<< "0.Выход"<< endl;
-	int number = Choose(0, 9);
+	int number = Choose(0, 6);
 	return number;
 }
 
@@ -79,8 +80,11 @@ vector <int> indexes(const int& max_num)
 	vector <int> res;
 	for (int i = a; i <= b; ++i) {//
 		res.push_back(i);
-		cout << i << endl;
 	}
 	return res;
 }
 
+//template<typename T> bool notEmpty(std::vector<T> vec)
+//{
+//	if (vec.size() != 0) return true;
+//}

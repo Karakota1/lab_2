@@ -7,6 +7,8 @@
 
 int Menu();
 
+//template <typename T> bool notEmpty(std::vector <T> vec); ??????
+
 float InputNum(float min, float max);
 int Choose(int min, int max);
 void inputString(std::istream& in, std::string& str);
