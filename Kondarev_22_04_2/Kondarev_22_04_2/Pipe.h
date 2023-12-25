@@ -2,32 +2,51 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <map>
+
+
+using namespace std;
+
+
 class Pipe
 {
 private:
-	int id;
-	std::string name;
+	
+	string name;
 	float length;
-	float diameter;
+	
 	bool inRepare = false;
 public:
+	int id;
 	static int MaxId;
-
+	bool NotiInConn = true;
+	int diameter;
 
 	Pipe();
 	
-	std::vector <Pipe> pipe;
+	vector <Pipe> pipe;
+	map <int, Pipe> pipes;
 
-	std::vector <int> filterPipes();
+	vector <int> filterPipes();
 
 	void AddPipe();
+	void AddCurPipe(int n);
 	void PipeChange(const int& num);
 	void ViewPipes();
 	void packagePipe();
 
-	void SaveDataPipes(std::ofstream& file);
+	void SaveDataPipes(ofstream& file);
 
-	void PipeDataLoad(std::ifstream& file);
+	void PipeDataLoad(ifstream& file);
+
+	string getName();
+	int getDiam();
+	int getLength();
+	bool getStatus();
+
+	void setStatus(bool status);
+
+	int getId();
 
 };
 

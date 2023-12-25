@@ -5,6 +5,8 @@
 #include <filesystem>
 
 
+const int INF = 99999;
+
 int Menu();
 
 //template <typename T> bool notEmpty(std::vector <T> vec); ??????
@@ -14,8 +16,9 @@ int Choose(int min, int max);
 void inputString(std::istream& in, std::string& str);
 std::string ChooseFileName();
 std::string ViewFiles(const std::string& path);
-
 std::vector <int> indexes(const int& max_num);
+
+
 
 class redirect_output_wrapper
 {

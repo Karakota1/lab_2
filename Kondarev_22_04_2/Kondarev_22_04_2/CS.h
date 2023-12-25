@@ -3,21 +3,19 @@
 #include <vector>
 #include <fstream>
 class CS
-{
+{	
 	int id;
 	std::string name;
 	int wrkshopsCount;
 	std::vector <bool> WS;
 	float efficiency;
 public:
-	static int MaxIdCS;
-
-	CS();
+	int MaxIdCS = 1;
 
 	int workingStations(int index);
 
+	std::map <int, CS> Stations;
 	std::vector <CS> cs;
-
 
 	std::vector <int> filterCS();
 
@@ -30,6 +28,7 @@ public:
 	void SaveDataCS(std::ofstream& file);
 	void CSDataLoad(std::ifstream& file);
 
-
+	std::string getName();
+	int getWSnum();
 };
 

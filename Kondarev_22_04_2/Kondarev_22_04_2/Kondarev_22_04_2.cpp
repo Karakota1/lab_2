@@ -9,11 +9,12 @@
 #include "Pipe.h"
 #include "CS.h"
 #include "Subfuncs.h"
+#include "Connection.h"
 
 using namespace std;
 using namespace chrono;
 
-void SaveData(Pipe& pipes, CS& css)
+void SaveData(Pipe& pipes, CS& css, Connection& con)
 {
 	ofstream file("Saves\\" + ChooseFileName(), ios_base::out | ios_base::trunc);
 	if (!file.is_open()) {
@@ -24,17 +25,20 @@ void SaveData(Pipe& pipes, CS& css)
 		pipes.SaveDataPipes(file);
 		//кс
 		css.SaveDataCS(file);
+		//соединения
+		con.SaveCon(file);
 	}
 	file.close();
 }
 
-void LoadData(Pipe& pipes, CS& css) {
+void LoadData(Pipe& pipe, CS& css, Connection& con) {
 	ifstream file("Saves\\"+ViewFiles("Saves"), ios::in);
 	if (file.is_open() and file.peek() != EOF) {
-		pipes.pipe.clear();
-		css.cs.clear();
-		pipes.PipeDataLoad(file);
+		//pipe.pipes.clear();
+		//css.cs.clear();
+		pipe.PipeDataLoad(file);
 		css.CSDataLoad(file);
+		con.LoadCon(file);
 	}
 	else {
 		cout << "\n\nОшибка загрузки файла\n\n";
@@ -50,7 +54,7 @@ int main()
 	if (logfile)
 		cerr_out.redirect(logfile);
 
-
+	Connection con;
 	Pipe pipes;
 	CS css;
 	SetConsoleCP(1251);
@@ -69,14 +73,18 @@ int main()
 			//system("cls");
 			break;
 		case 3:
+			con.make_a_con(css,pipes);
+			break;//Добавить соединение
+		case 4:
 			//system("cls");
 			cout << "\t0.Трубы\n\t1.КС\n";
 			if (!Choose(0, 1))
 				pipes.ViewPipes();
 			else
+				//cout << con.getConLen();   
 				css.ViewCSs();
 			break;
-		case 4:
+		case 5:
 			//system("cls");
 			//system("cls");
 			cout << "\t0.Трубы\n\t1.КС\n";
@@ -90,11 +98,26 @@ int main()
 			cout << "Введите номер трубы для редактирования: ";
 			pipes.PipeChange(Choose(1,pipes.pipe.size()));*/
 			//system("cls");
-		case 5:
-			SaveData(pipes, css);
-			break;
 		case 6:
-			LoadData(pipes, css);
+			cout << "0.Кратчайший путь\n1.Топлологическая сортировка\n2.Максимальный поток\nВвод: ";
+			
+			switch(Choose(0, 2)) {
+			case 0:	
+				con.shortestPath(css, pipes);
+				break;
+			case 1: 
+				con.topSort(css, pipes);
+				break;//Редактировать соединения
+			case 2:
+				con.maxStream(css, pipes);
+				break;
+			}
+			break;
+		case 7:
+			SaveData(pipes, css, con);
+			break;
+		case 8:
+			LoadData(pipes, css, con);
 			break;
 		case 0:
 			exit(0);

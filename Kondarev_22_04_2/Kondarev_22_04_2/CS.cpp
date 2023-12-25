@@ -1,19 +1,12 @@
-#include "CS.h"
-#include "Subfuncs.h"
+#include "Connection.h"
 
 using namespace std;
-
-int CS::MaxIdCS = 0;
-
-CS::CS() {
-	id = MaxIdCS++;
-}
 
 int CS::workingStations(int index)
 {
 	int num = 0;
-	for (int i = 0; i < cs[index].wrkshopsCount; i++) {
-		if (cs[index].WS[i])
+	for (int i = 0; i < Stations[index].wrkshopsCount; i++) {
+		if (Stations[index].WS[i])
 			num++;
 	}
 	return num;
@@ -36,13 +29,13 @@ std::vector<int> CS::filterCS()
 			status = InputNum(0, 100);
 			cout << endl;
 
-			for (int i = 0; i < cs.size(); i++)
-				if (cs[i].name == name and (cs[i].wrkshopsCount - workingStations(i)) / cs[i].wrkshopsCount * 100 == status)
-					index.push_back(i);
+			for (const auto& i: Stations)
+				if (i.second.name == name and (i.second.wrkshopsCount - workingStations(i.first)) / i.second.wrkshopsCount * 100 == status)
+					index.push_back(i.first);
 		}
 		else
-			for (int i = 0; i < cs.size(); i++)
-				index.push_back(i);
+			for (const auto& i : Stations)
+				index.push_back(i.first);
 		return index;
 	}
 	else
@@ -52,6 +45,7 @@ std::vector<int> CS::filterCS()
 void CS::AddCS()
 {
 	CS css;
+	id = MaxIdCS++;
 	cout << "Ввидите название КС: ";
 	cin.ignore(10000, '\n');
 	getline(cin, css.name);
@@ -66,6 +60,8 @@ void CS::AddCS()
 	css.efficiency = effic;
 	css.wrkshopsCount = count;
 	cs.push_back(css);
+	Stations.insert({ id, css });
+	cout << Stations.size() << " " << MaxIdCS;
 }
 
 void CS::ViewWS(int& i) {
@@ -81,16 +77,16 @@ void CS::ViewWS(int& i) {
 
 void CS::ViewCSs()
 {
-	if (cs.size() != 0) {
+	if (Stations.size() != 0) {
 		vector <int> indexes = filterCS();
 		cout << "Список КС:" << endl << endl;
 		for (int i : indexes) {
-			cout << "ID: " << cs[i].id << endl;
-			cout << "Номер: " << i + 1 << endl;
-			cout << "Название КС: " << cs[i].name << endl;
-			cout << "Число Цехов: " << cs[i].wrkshopsCount << endl << endl;
-			cout << "Эффективность КС: " << cs[i].efficiency << "%" << endl << endl;
-			cout << "Чисто рабочих станций: " << cs[i].WS.size() << endl;
+			cout << "ID: " << i << endl;
+			//cout << "Номер: " << i + 1 << endl;
+			cout << "Название КС: " << Stations[i].name << endl;
+			cout << "Число Цехов: " << Stations[i].wrkshopsCount << endl << endl;
+			cout << "Эффективность КС: " << Stations[i].efficiency << "%" << endl << endl;
+			cout << "Чисто рабочих станций: " << Stations[i].WS.size() << endl;
 			cout << endl;
 			//ViewWS(i); Ну если очень хочется посмотреть на рабочие станции, то милости прошу - раскоментируй
 		}
@@ -116,6 +112,11 @@ void CS::CSChange(const int& id_cs)
 void CS::packageCS()
 {
 	vector <int> index = filterCS();
+	for (auto i : index) {
+		std::cout << "Название: " << Stations[i].name << endl;
+		std::cout << "Кол-во станций: " << Stations[i].wrkshopsCount << endl;
+		std::cout << "Эффективность: " << Stations[i].efficiency << endl;
+	}
 	cout << "\n0.Редактировать\n1.Удалить\nВведите:  ";
 	int num = Choose(0, 2);
 	string new_name;
@@ -124,12 +125,12 @@ void CS::packageCS()
 		cout << "Введите новое название для КС: ";
 		inputString(cin, new_name);
 		for (int i : index) {
-			cs[i].name = new_name;
+			Stations[i].name = new_name;
 		}
 		break;
 	case 1:
 		for (int i = index.size() - 1; i >= 0; i--) {
-			cs.erase(cs.begin() + index[i]);//когда мы удаляем некоторые элементы, надо учитывать, что до этого мы удалили какие-то другие, значит, их индекс съехал. Делаем выводы!
+			Stations.erase(index[i]);//когда мы удаляем некоторые элементы, надо учитывать, что до этого мы удалили какие-то другие, значит, их индекс съехал. Делаем выводы!
 		}
 		break;
 	}
@@ -137,12 +138,12 @@ void CS::packageCS()
 
 void CS::SaveDataCS(std::ofstream& file)
 {
-	if (cs.size() != 0) {
-		file << 1 << " " << cs.size() << " " << MaxIdCS << endl;
-		for (int i = 0; i < cs.size(); i++) {
-			file << cs[i].name << endl;
-			file << cs[i].id << " " << cs[i].wrkshopsCount << " " << cs[i].efficiency << endl;
-			for (bool WS : cs[i].WS) {
+	if (Stations.size() != 0) {
+		file << 1 << " " << Stations.size() << " " << MaxIdCS << endl;
+		for (const auto& [id,st] : Stations) {
+			file << st.name << endl;
+			file << id << " " << st.wrkshopsCount << " " << st.efficiency << endl;
+			for (bool WS : st.WS) {
 				file << WS << " ";
 			}
 			file << endl;
@@ -176,6 +177,17 @@ void CS::CSDataLoad(std::ifstream& file)
 
 			}
 			cs.push_back(css);
+			Stations.insert({css.id,css});
 		}
 	}
+}
+
+std::string CS::getName()
+{
+	return name;
+}
+
+int CS::getWSnum()
+{
+	return wrkshopsCount;
 }
